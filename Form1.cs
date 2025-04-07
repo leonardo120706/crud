@@ -8,11 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using MySql.Data.MySqlClient;
+
 
 namespace cadastrodeclientes
 {
     public partial class frmCadastroDeClientes : Form
     {
+
+        //Conexão com o banco de dados MySQL
+        MySqlConnection Conexao;
+        string data_source = "datasource=localhost; username=root; password=; database=db_cadastro";
+
         public frmCadastroDeClientes()
         {
             InitializeComponent();
@@ -20,7 +27,7 @@ namespace cadastrodeclientes
         // Validaçao Regex
         private bool isValidEmail(string email)
         {
-            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z{2,}$";
+            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
             Regex regex = new Regex(pattern);
             return regex.IsMatch(email);
         }
@@ -77,9 +84,55 @@ namespace cadastrodeclientes
                                      "Validação",
                                       MessageBoxButtons.OK,
                                       MessageBoxIcon.Warning);
+                    return;
                 };
-                    
 
+                //Cria a conexão com o banco de dados
+                Conexao = new MySqlConnection(data_source);
+                Conexao.Open();
+
+                //MessageBox.Show("Conexão aberta com sucesso"); teste de arbetura de banco
+                
+
+                //comeando SQL para insirir um novo cliente no banco de dados
+
+                MySqlCommand cmd = new MySqlCommand
+                {
+                    Connection = Conexao
+                };
+
+                cmd.Prepare();
+
+                cmd.CommandText = "INSERT INTO dadosdecliente(nomecompleto, nomesocial, email, cpf)" +
+                    "VAlUES (@nomecompleto, @nomesocial, @email, @cpf )";
+
+
+
+
+                //adiciona parâmetroscom os dados do formulário
+
+                cmd.Parameters.AddWithValue("@nomecompleto", txtNomeCompleto.Text.Trim());
+                cmd.Parameters.AddWithValue("@nomesocial", txtNomeSocial.Text.Trim());
+                cmd.Parameters.AddWithValue("@email", email);
+                cmd.Parameters.AddWithValue("@cpf", cpf);
+
+                //Executa um comando de Inserção no banco
+                cmd.ExecuteNonQuery();
+
+                //Menssagem de sucesso
+                MessageBox.Show("Contato Inserido com Sucesso: ",
+                    "Sucesso",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+            }
+            catch(MySqlException ex)
+            {
+                //Trata erros relacionados ao MySQL
+                MessageBox.Show("Erro" + ex.Number + "ocorreu: " + ex.Message,
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
@@ -89,6 +142,15 @@ namespace cadastrodeclientes
                     "Erro",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
+            }
+            finally
+            {
+                //Garante que a conexão com o banco será fechada, mesmo se ocorrre erro
+                if(Conexao != null && Conexao.State == ConnectionState.Open)
+                {
+                    Conexao.Close();
+                    //MessageBox.Show("Conexão fechada com sucesso");teste de arbetura de banco
+                }
             }
         }
     }
