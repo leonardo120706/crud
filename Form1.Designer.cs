@@ -42,10 +42,14 @@ namespace cadastrodeclientes
             this.txtNomeCompleto = new System.Windows.Forms.TextBox();
             this.lblNomeCompleto = new System.Windows.Forms.Label();
             this.tbConsulta = new System.Windows.Forms.TabPage();
+            this.btnPesquisar = new System.Windows.Forms.Button();
+            this.txtBuscar = new System.Windows.Forms.TextBox();
             this.btnSalvar = new System.Windows.Forms.Button();
+            this.lstCliente = new System.Windows.Forms.ListView();
             this.panelTopo.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbCadastro.SuspendLayout();
+            this.tbConsulta.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelTopo
@@ -122,6 +126,7 @@ namespace cadastrodeclientes
             this.txtEmail.Name = "txtEmail";
             this.txtEmail.Size = new System.Drawing.Size(264, 26);
             this.txtEmail.TabIndex = 5;
+            this.txtEmail.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblEmail
             // 
@@ -139,6 +144,7 @@ namespace cadastrodeclientes
             this.txtNomeSocial.Name = "txtNomeSocial";
             this.txtNomeSocial.Size = new System.Drawing.Size(264, 26);
             this.txtNomeSocial.TabIndex = 3;
+            this.txtNomeSocial.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblNomeSocial
             // 
@@ -156,6 +162,7 @@ namespace cadastrodeclientes
             this.txtNomeCompleto.Name = "txtNomeCompleto";
             this.txtNomeCompleto.Size = new System.Drawing.Size(264, 26);
             this.txtNomeCompleto.TabIndex = 1;
+            this.txtNomeCompleto.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblNomeCompleto
             // 
@@ -169,6 +176,9 @@ namespace cadastrodeclientes
             // 
             // tbConsulta
             // 
+            this.tbConsulta.Controls.Add(this.lstCliente);
+            this.tbConsulta.Controls.Add(this.btnPesquisar);
+            this.tbConsulta.Controls.Add(this.txtBuscar);
             this.tbConsulta.Location = new System.Drawing.Point(4, 29);
             this.tbConsulta.Name = "tbConsulta";
             this.tbConsulta.Padding = new System.Windows.Forms.Padding(3);
@@ -176,6 +186,25 @@ namespace cadastrodeclientes
             this.tbConsulta.TabIndex = 1;
             this.tbConsulta.Text = "Consulta";
             this.tbConsulta.UseVisualStyleBackColor = true;
+            // 
+            // btnPesquisar
+            // 
+            this.btnPesquisar.BackColor = System.Drawing.Color.DarkMagenta;
+            this.btnPesquisar.ForeColor = System.Drawing.Color.White;
+            this.btnPesquisar.Location = new System.Drawing.Point(352, 25);
+            this.btnPesquisar.Name = "btnPesquisar";
+            this.btnPesquisar.Size = new System.Drawing.Size(110, 34);
+            this.btnPesquisar.TabIndex = 1;
+            this.btnPesquisar.Text = "Pesquisar";
+            this.btnPesquisar.UseVisualStyleBackColor = false;
+            this.btnPesquisar.Click += new System.EventHandler(this.btnPesquisar_Click);
+            // 
+            // txtBuscar
+            // 
+            this.txtBuscar.Location = new System.Drawing.Point(20, 29);
+            this.txtBuscar.Name = "txtBuscar";
+            this.txtBuscar.Size = new System.Drawing.Size(306, 26);
+            this.txtBuscar.TabIndex = 0;
             // 
             // btnSalvar
             // 
@@ -189,6 +218,15 @@ namespace cadastrodeclientes
             this.btnSalvar.Text = "Salvar";
             this.btnSalvar.UseVisualStyleBackColor = false;
             this.btnSalvar.Click += new System.EventHandler(this.btnSalvar_Click);
+            // 
+            // lstCliente
+            // 
+            this.lstCliente.HideSelection = false;
+            this.lstCliente.Location = new System.Drawing.Point(20, 79);
+            this.lstCliente.Name = "lstCliente";
+            this.lstCliente.Size = new System.Drawing.Size(725, 175);
+            this.lstCliente.TabIndex = 2;
+            this.lstCliente.UseCompatibleStateImageBehavior = false;
             // 
             // frmCadastroDeClientes
             // 
@@ -205,6 +243,8 @@ namespace cadastrodeclientes
             this.tabControl1.ResumeLayout(false);
             this.tbCadastro.ResumeLayout(false);
             this.tbCadastro.PerformLayout();
+            this.tbConsulta.ResumeLayout(false);
+            this.tbConsulta.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -225,6 +265,9 @@ namespace cadastrodeclientes
         private System.Windows.Forms.TextBox txtNomeCompleto;
         private System.Windows.Forms.Label lblNomeCompleto;
         private System.Windows.Forms.Button btnSalvar;
+        private System.Windows.Forms.Button btnPesquisar;
+        private System.Windows.Forms.TextBox txtBuscar;
+        private System.Windows.Forms.ListView lstCliente;
     }
 }
 
