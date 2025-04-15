@@ -20,6 +20,8 @@ namespace cadastrodeclientes
         MySqlConnection Conexao;
         string data_source = "datasource=localhost; username=root; password=; database=db_cadastro";
 
+        private int ?codigo_cliente = null;
+
         public frmCadastroDeClientes()
         {
             InitializeComponent();
@@ -198,31 +200,60 @@ namespace cadastrodeclientes
                 };
 
                 cmd.Prepare();
+                if(codigo_cliente == null)
+                {
+                    //insert CREATE
+                    cmd.CommandText = "INSERT INTO dadosdecliente(nomecompleto, nomesocial, email, cpf)" +
+                   "VAlUES (@nomecompleto, @nomesocial, @email, @cpf )";
 
-                cmd.CommandText = "INSERT INTO dadosdecliente(nomecompleto, nomesocial, email, cpf)" +
-                    "VAlUES (@nomecompleto, @nomesocial, @email, @cpf )";
 
+                    //adiciona parâmetros com os dados do formulário
 
+                    cmd.Parameters.AddWithValue("@nomecompleto", txtNomeCompleto.Text.Trim());
+                    cmd.Parameters.AddWithValue("@nomesocial", txtNomeSocial.Text.Trim());
+                    cmd.Parameters.AddWithValue("@email", email);
+                    cmd.Parameters.AddWithValue("@cpf", cpf);
 
+                    //Executa um comando de Inserção no banco
+                    cmd.ExecuteNonQuery();
 
-                //adiciona parâmetroscom os dados do formulário
+                    //Menssagem de sucesso
+                    MessageBox.Show("Contato Inserido com Sucesso: ",
+                        "Sucesso",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                else
+                {
+                    //UPDATE
+                    cmd.CommandText = $"UPDATE `dadosdecliente` SET " +
+                        $"nomecompleto = @nomecompleto, " +
+                        $"nomesocial = @nomesocial, " +
+                        $"email = @email, " +
+                        $"cpf =  @cpf " +
+                        $"WHERE codigo = @codigo"; //WHERE(onde) o codigo for ihual ao cliente no banco de dados
 
-                cmd.Parameters.AddWithValue("@nomecompleto", txtNomeCompleto.Text.Trim());
-                cmd.Parameters.AddWithValue("@nomesocial", txtNomeSocial.Text.Trim());
-                cmd.Parameters.AddWithValue("@email", email);
-                cmd.Parameters.AddWithValue("@cpf", cpf);
+                    cmd.Parameters.AddWithValue("@nomecompleto", txtNomeCompleto.Text.Trim());
+                    cmd.Parameters.AddWithValue("@nomesocial", txtNomeSocial.Text.Trim());
+                    cmd.Parameters.AddWithValue("@email", email);
+                    cmd.Parameters.AddWithValue("@cpf", cpf);
+                    cmd.Parameters.AddWithValue("@codigo", codigo_cliente);
 
-                //Executa um comando de Inserção no banco
-                cmd.ExecuteNonQuery();
+                    //Execute o comando de alteração no Banco
+                    cmd.ExecuteNonQuery();
 
-                //Menssagem de sucesso
-                MessageBox.Show("Contato Inserido com Sucesso: ",
-                    "Sucesso",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    //Mensagem de sucesso para dados de atualização
+                    MessageBox.Show($"Os dados com o código {codigo_cliente} foram alterados com Sucesso!",
+                        "Sucesso", 
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                }
+
+                codigo_cliente = null;
 
                 //Limpa os campos após os sucesso 
-                txtNomeCompleto.Text = string.Empty; //mesma coisa de escrever string . vazia
+                txtNomeCompleto.Text = string.Empty; //mesma coisa de escrever string . '''';
                 txtNomeSocial.Text = "";
                 txtEmail.Text = "";
                 txtCPF.Text = "";
@@ -265,6 +296,42 @@ namespace cadastrodeclientes
         {
             string query = "SELECT * FROM dadosdecliente WHERE nomecompleto LIKE @q OR nomesocial LIKE @q ORDER BY codigo DESC";
             carregar_cliente_com_query(query);
+        }
+
+        private void lstCliente_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            ListView.SelectedListViewItemCollection clientedaselecao = lstCliente.SelectedItems;
+
+            foreach(ListViewItem item in clientedaselecao)
+            {
+                codigo_cliente = Convert.ToInt32(item.SubItems[0].Text);
+
+                //Exibe uma MessageBox código do cliente
+                MessageBox.Show("Código do cliente: " + codigo_cliente.ToString(),
+                    "Código Selecionado",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                txtNomeCompleto.Text = item.SubItems[1].Text;
+                txtNomeSocial.Text = item.SubItems[2].Text;
+                txtEmail.Text = item.SubItems[3].Text;
+                txtCPF.Text = item.SubItems[4].Text;
+
+            }
+            // Muda para a aba de dados do cliente
+            tabControl1.SelectedIndex = 0; 
+        }
+
+        private void btnNovoCliente_Click(object sender, EventArgs e)
+        {
+            codigo_cliente = null;
+
+            txtNomeCompleto.Text = string.Empty; //mesma coisa de escrever string . "";
+            txtNomeSocial.Text = "";
+            txtEmail.Text = "";
+            txtCPF.Text = "";
+
+            txtNomeCompleto.Focus();
         }
     }
 }
