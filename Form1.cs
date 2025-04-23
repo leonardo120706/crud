@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using MySql.Data.MySqlClient;
 
 
+
 namespace cadastrodeclientes
 {
     public partial class frmCadastroDeClientes : Form
@@ -231,7 +232,7 @@ namespace cadastrodeclientes
                         $"nomesocial = @nomesocial, " +
                         $"email = @email, " +
                         $"cpf =  @cpf " +
-                        $"WHERE codigo = @codigo"; //WHERE(onde) o codigo for ihual ao cliente no banco de dados
+                        $"WHERE codigo = @codigo"; //WHERE(onde) o codigo for igual ao cliente no banco de dados
 
                     cmd.Parameters.AddWithValue("@nomecompleto", txtNomeCompleto.Text.Trim());
                     cmd.Parameters.AddWithValue("@nomesocial", txtNomeSocial.Text.Trim());
@@ -262,6 +263,7 @@ namespace cadastrodeclientes
                 carregar_clientes(); 
 
                 //Muda para a aba de pesquisa
+
                 tabControl1.SelectedIndex = 1;
             }
             catch(MySqlException ex)
@@ -333,5 +335,78 @@ namespace cadastrodeclientes
 
             txtNomeCompleto.Focus();
         }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e) 
+        {
+            excluir_cliente();
+        }
+
+        private void btnExcluirCliente_Click(object sender, EventArgs e)
+        {
+            excluir_cliente();
+        }
+
+        private void excluir_cliente()
+        {
+            try
+            {
+                DialogResult opcaoDigitada = MessageBox.Show($"Tem certeza em que deseja excluir o registro do codigo {codigo_cliente}?",
+                    "Tem certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (opcaoDigitada == DialogResult.Yes)
+                {
+                    Conexao = new MySqlConnection(data_source);
+
+                    Conexao.Open();
+
+                    MySqlCommand cmd = new MySqlCommand();
+
+                    cmd.Connection = Conexao;
+                    cmd.Prepare();
+
+                    cmd.CommandText = "DELETE FROM dadosdecliente WHERE codigo = @codigo";
+
+                    cmd.Parameters.AddWithValue("@codigo", codigo_cliente);
+
+                    cmd.ExecuteNonQuery();
+
+                    //Excluir no Banco de Dados
+                    MessageBox.Show("Os dados do cliente doram EXCLUÍDOS",
+                        "Sucesso",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+
+                carregar_clientes();
+            }
+            catch (MySqlException ex)
+            {
+                //Trata erros relacionados ao MySQL
+                MessageBox.Show("Erro" + ex.Number + "ocorreu: " + ex.Message,
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+
+                //Trata outros tipos de erros
+                MessageBox.Show("Ocorreu: " + ex.Message,
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                //Garante que a conexão com o banco será fechada, mesmo se ocorrre erro
+                if (Conexao != null && Conexao.State == ConnectionState.Open)
+                {
+                    Conexao.Close();
+                    //MessageBox.Show("Conexão fechada com sucesso");teste de arbetura de banco                                                                
+                }
+            }
+        }
     }
 }
+
+ 
